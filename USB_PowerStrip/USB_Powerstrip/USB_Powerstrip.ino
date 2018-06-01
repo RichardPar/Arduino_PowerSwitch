@@ -62,6 +62,7 @@ void loop() {
                 digitalWrite(RELAY1, LOW);
                 digitalWrite(LED_RELAY1, HIGH);
                 Serial.write("OK\r\n");
+                commTimer=-1;
              }
 
             if (memcmp(buffer,"R1_OFF",6) == 0)
@@ -69,6 +70,7 @@ void loop() {
                 digitalWrite(RELAY1, HIGH);
                 digitalWrite(LED_RELAY1, LOW);
                 Serial.write("OK\r\n");
+                commTimer=-1;
               }
             
             if (memcmp(buffer,"R2_ON",5) == 0)
@@ -76,6 +78,7 @@ void loop() {
                 digitalWrite(RELAY2, LOW);
                 digitalWrite(LED_RELAY2, HIGH);
                 Serial.write("OK\r\n");
+                commTimer=-1;
                }
 
             if (memcmp(buffer,"R2_OFF",6) == 0)
@@ -83,6 +86,7 @@ void loop() {
                 digitalWrite(RELAY2, HIGH);
                 digitalWrite(LED_RELAY2, LOW);
                 Serial.write("OK\r\n");    
+                commTimer=-1;
                }
     
             bufptr=0;
@@ -104,7 +108,10 @@ void resetComms(MillisTimer &mt)
   } else
   {
     if (commTimer==0)
+     {
        bufptr=0;
+       Serial.write("TIMEOUT\n");
+     }
 
     commTimer=-1;
   }
