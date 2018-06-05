@@ -48,10 +48,10 @@ void loop() {
    timer1.run();
 
    rxCount = Serial.available();
-   while (rxCount > 0)
+   if (rxCount > 0)
    {
           inChar = Serial.read();
-          Serial.write(inChar);
+          
           digitalWrite(LED_POWER, LOW);
           commTimer=10;
           if ((inChar == 13) || (inChar == 10))
@@ -103,9 +103,10 @@ void loop() {
             if (bufptr >= 10)
                bufptr=0;
           }
-       digitalWrite(LED_POWER, HIGH);   
+     
        rxCount=0;      
      }
+     digitalWrite(LED_POWER, HIGH);   
    } // end of while 1
 }
 
