@@ -41,12 +41,18 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
    char inChar;
+   int rxCount;
 
-   timer1.run();
-   while (Serial.available() > 0)
+   while (1)
    {
-     
+   timer1.run();
+
+   rxCount = Serial.available();
+   while (rxCount > 0)
+   {
           inChar = Serial.read();
+          Serial.write(inChar);
+          digitalWrite(LED_POWER, LOW);
           commTimer=10;
           if ((inChar == 13) || (inChar == 10))
           {
@@ -61,7 +67,7 @@ void loop() {
              {
                 digitalWrite(RELAY1, LOW);
                 digitalWrite(LED_RELAY1, HIGH);
-                Serial.write("OK\r\n");
+                Serial.write("\r\nOK\r\n");
                 commTimer=-1;
              }
 
@@ -69,7 +75,7 @@ void loop() {
               {
                 digitalWrite(RELAY1, HIGH);
                 digitalWrite(LED_RELAY1, LOW);
-                Serial.write("OK\r\n");
+                Serial.write("\r\nOK\r\n");
                 commTimer=-1;
               }
             
@@ -77,7 +83,7 @@ void loop() {
                {
                 digitalWrite(RELAY2, LOW);
                 digitalWrite(LED_RELAY2, HIGH);
-                Serial.write("OK\r\n");
+                Serial.write("\r\nOK\r\n");
                 commTimer=-1;
                }
 
@@ -85,7 +91,7 @@ void loop() {
                { 
                 digitalWrite(RELAY2, HIGH);
                 digitalWrite(LED_RELAY2, LOW);
-                Serial.write("OK\r\n");    
+                Serial.write("\r\nOK\r\n");    
                 commTimer=-1;
                }
     
@@ -96,8 +102,11 @@ void loop() {
             bufptr++;
             if (bufptr >= 10)
                bufptr=0;
-          }      
-   }
+          }
+       digitalWrite(LED_POWER, HIGH);   
+       rxCount=0;      
+     }
+   } // end of while 1
 }
 
 void resetComms(MillisTimer &mt)
