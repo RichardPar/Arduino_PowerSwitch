@@ -15,6 +15,7 @@ char bufptr=0;
 
 MillisTimer timer1 = MillisTimer(10);
 int commTimer=0;
+int powerblink=0;
 
 
 // the setup function runs once when you press reset or power the board
@@ -52,7 +53,7 @@ void loop() {
    {
           inChar = Serial.read();
           
-          digitalWrite(LED_POWER, LOW);
+          blink();
           commTimer=10;
           if ((inChar == 13) || (inChar == 10))
           {
@@ -105,13 +106,13 @@ void loop() {
           }
      
        rxCount=0;      
-     }
-     digitalWrite(LED_POWER, HIGH);   
+     }   
    } // end of while 1
 }
 
 void resetComms(MillisTimer &mt)
 {
+  powerled();
   if (commTimer>0)
   {
    commTimer--;
@@ -127,3 +128,22 @@ void resetComms(MillisTimer &mt)
   }
 
 }
+
+void blink(void)
+{
+  powerblink=10;
+  digitalWrite(LED_POWER, LOW);
+}
+
+void powerled(void)
+{
+  if (powerblink > 0)
+   {
+    powerblink--;
+   } else
+   {
+    digitalWrite(LED_POWER, HIGH); 
+   }
+  
+}
+
