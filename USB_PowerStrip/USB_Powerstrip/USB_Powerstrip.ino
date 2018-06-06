@@ -16,6 +16,8 @@ char bufptr=0;
 MillisTimer timer1 = MillisTimer(10);
 int commTimer=0;
 int powerblink=0;
+char lastChar=0xff;
+char checkserial=1;
 
 
 // the setup function runs once when you press reset or power the board
@@ -41,17 +43,30 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-   char inChar;
-   int rxCount;
 
-   while (1)
-   {
    timer1.run();
 
+
+}
+
+
+void do_serial()
+{
+   int rxCount;
+   int inChar;
+  
    rxCount = Serial.available();
    if (rxCount > 0)
    {
           inChar = Serial.read();
+          
+          if (inChar == -1)
+          {
+            digitalWrite(LED_POWER, LOW);
+            return;
+          }
+            
+          lastChar=inChar;
           
           blink();
           commTimer=10;
@@ -61,7 +76,7 @@ void loop() {
             if (bufptr < 5)
                 {
                   bufptr=0;
-                  break;
+                  return;
                 }
 
             if (memcmp(buffer,"R1_ON",5) == 0)
@@ -72,7 +87,7 @@ void loop() {
                 commTimer=-1;
              }
 
-            if (memcmp(buffer,"R1_OFF",6) == 0)
+            if (memcmp(buffer,"R1_OF",5) == 0)
               {
                 digitalWrite(RELAY1, HIGH);
                 digitalWrite(LED_RELAY1, LOW);
@@ -88,7 +103,7 @@ void loop() {
                 commTimer=-1;
                }
 
-            if (memcmp(buffer,"R2_OFF",6) == 0)
+            if (memcmp(buffer,"R2_OF",5) == 0)
                { 
                 digitalWrite(RELAY2, HIGH);
                 digitalWrite(LED_RELAY2, LOW);
@@ -107,11 +122,16 @@ void loop() {
      
        rxCount=0;      
      }   
-   } // end of while 1
+
 }
+
+
 
 void resetComms(MillisTimer &mt)
 {
+
+  do_serial();
+  
   powerled();
   if (commTimer>0)
   {
@@ -131,7 +151,7 @@ void resetComms(MillisTimer &mt)
 
 void blink(void)
 {
-  powerblink=10;
+  powerblink=5;
   digitalWrite(LED_POWER, LOW);
 }
 
@@ -147,3 +167,7 @@ void powerled(void)
   
 }
 
+void software_Reset() // Restarts program from beginning but does not reset the peripherals and registers
+{
+asm volatile ("  jmp 0");  
+}  
